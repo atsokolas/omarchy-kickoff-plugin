@@ -11,6 +11,7 @@ The pill on the bar shows a live score when a followed club is playing (`ARS 1-0
 - **Table** — Premier League, LaLiga, Bundesliga, Serie A, Ligue 1, Champions League, Europa League, MLS.
 - **Match detail** — score, goal/card events, possession, xG, shots.
 - **Goal toasts** — desktop notifications when a followed club scores.
+- **The whistle** — full time gets its own moment on the bar, with a verdict for a followed club.
 - Live polling every 20 seconds while matches are in progress, every 3 minutes otherwise.
 
 ## Goals
@@ -27,7 +28,15 @@ To see it without waiting for a goal:
 omarchy-shell atsokolas.kickoff celebrate
 ```
 
-That runs the real path against the first match on screen, so it exercises exactly what a live goal does.
+That runs the real path against the first match on screen, so it exercises exactly what a live goal does. The shout is joined by the scoring club's crest.
+
+## Full time
+
+When a match the bar was showing finishes, the ball — which has been fidgeting all match — bounces three times, each lower than the last, and comes to rest. The score gives way to a verdict for a beat: `THAT'S THE WIN 2-1`, `NEXT TIME 0-1`, or `HONOURS EVEN 1-1` for a followed club; plain `FT 2-1` for anyone else's match. A goal already in flight finishes first; the whistle waits.
+
+```bash
+omarchy-shell atsokolas.kickoff whistle
+```
 
 ## Details
 
@@ -101,3 +110,7 @@ node --test tests/model.test.js
 omarchy plugin disable atsokolas.kickoff
 omarchy plugin remove atsokolas.kickoff --yes
 ```
+
+## License
+
+MIT.
