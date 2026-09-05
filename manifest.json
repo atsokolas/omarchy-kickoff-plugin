@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "atsokolas.kickoff",
+  "name": "Kickoff",
+  "version": "1.0.0",
+  "author": "atsokolas",
+  "license": "MIT",
+  "description": "Live football scores, tables, and followed clubs on the Omarchy bar.",
+  "kinds": [
+    "service",
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "service": "Service.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Kickoff",
+    "description": "Live scores on the bar; matches, following, and league tables in the panel.",
+    "category": "Info",
+    "aliases": [
+      "kickoff",
+      "football",
+      "soccer",
+      "scores",
+      "footy"
+    ],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "notify": true,
+      "matchesFilter": "featured"
+    },
+    "schema": [
+      {
+        "key": "notify",
+        "type": "boolean",
+        "label": "Goal notifications",
+        "defaultValue": true
+      },
+      {
+        "key": "matchesFilter",
+        "type": "enum",
+        "label": "Matches list",
+        "options": [
+          "featured",
+          "all"
+        ],
+        "defaultValue": "featured"
+      }
+    ]
+  }
+}

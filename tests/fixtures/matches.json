@@ -1,0 +1,386 @@
+{
+  "date": "20260904",
+  "leagues": [
+    {
+      "ccode": "ENG",
+      "id": 47,
+      "primaryId": 47,
+      "name": "Premier League",
+      "matches": [
+        {
+          "id": 5795441,
+          "leagueId": 47,
+          "time": "04.09.2026 21:00",
+          "home": {
+            "id": 9902,
+            "score": 0,
+            "name": "Ipswich",
+            "longName": "Ipswich Town"
+          },
+          "away": {
+            "id": 8650,
+            "score": 2,
+            "name": "Liverpool",
+            "longName": "Liverpool"
+          },
+          "eliminatedTeamId": null,
+          "statusId": 6,
+          "tournamentStage": "3",
+          "status": {
+            "utcTime": "2026-09-04T19:00:00.000Z",
+            "halfs": {
+              "firstHalfStarted": "04.09.2026 21:00:21",
+              "secondHalfStarted": "04.09.2026 22:03:03"
+            },
+            "periodLength": 45,
+            "finished": true,
+            "started": true,
+            "cancelled": false,
+            "awarded": false,
+            "scoreStr": "0 - 2",
+            "reason": {
+              "short": "FT",
+              "shortKey": "fulltime_short",
+              "long": "Full-Time",
+              "longKey": "finished"
+            }
+          },
+          "timeTS": 1788548400000
+        }
+      ]
+    },
+    {
+      "ccode": "GER",
+      "id": 54,
+      "primaryId": 54,
+      "name": "Bundesliga",
+      "matches": [
+        {
+          "id": 5881159,
+          "leagueId": 54,
+          "time": "04.09.2026 20:30",
+          "home": {
+            "id": 10269,
+            "score": 4,
+            "name": "VfB Stuttgart",
+            "longName": "VfB Stuttgart"
+          },
+          "away": {
+            "id": 8722,
+            "score": 1,
+            "name": "K\u00f6ln",
+            "longName": "1. FC K\u00f6ln"
+          },
+          "eliminatedTeamId": null,
+          "statusId": 6,
+          "tournamentStage": "2",
+          "status": {
+            "utcTime": "2026-09-04T18:30:00.000Z",
+            "halfs": {
+              "firstHalfStarted": "04.09.2026 20:32:20",
+              "secondHalfStarted": "04.09.2026 21:36:14"
+            },
+            "periodLength": 45,
+            "finished": true,
+            "started": true,
+            "cancelled": false,
+            "awarded": false,
+            "scoreStr": "4 - 1",
+            "reason": {
+              "short": "FT",
+              "shortKey": "fulltime_short",
+              "long": "Full-Time",
+              "longKey": "finished"
+            }
+          },
+          "timeTS": 1788546600000
+        }
+      ]
+    },
+    {
+      "ccode": "ESP",
+      "id": 87,
+      "primaryId": 87,
+      "name": "LaLiga",
+      "matches": [
+        {
+          "id": 5868043,
+          "leagueId": 87,
+          "time": "04.09.2026 21:00",
+          "home": {
+            "id": 8603,
+            "score": 1,
+            "name": "Real Betis",
+            "longName": "Real Betis"
+          },
+          "away": {
+            "id": 8633,
+            "score": 0,
+            "name": "Real Madrid",
+            "longName": "Real Madrid"
+          },
+          "eliminatedTeamId": null,
+          "statusId": 6,
+          "tournamentStage": "4",
+          "status": {
+            "utcTime": "2026-09-04T19:00:00.000Z",
+            "halfs": {
+              "firstHalfStarted": "04.09.2026 21:02:10",
+              "secondHalfStarted": "04.09.2026 22:12:44"
+            },
+            "periodLength": 45,
+            "finished": true,
+            "started": true,
+            "cancelled": false,
+            "awarded": false,
+            "scoreStr": "1 - 0",
+            "reason": {
+              "short": "FT",
+              "shortKey": "fulltime_short",
+              "long": "Full-Time",
+              "longKey": "finished"
+            }
+          },
+          "timeTS": 1788548400000
+        }
+      ]
+    },
+    {
+      "ccode": "FRA",
+      "id": 53,
+      "primaryId": 53,
+      "name": "Ligue 1",
+      "matches": [
+        {
+          "id": 5802922,
+          "leagueId": 53,
+          "time": "04.09.2026 19:00",
+          "home": {
+            "id": 9748,
+            "score": 3,
+            "name": "Lyon",
+            "longName": "Lyon"
+          },
+          "away": {
+            "id": 8583,
+            "score": 1,
+            "name": "Auxerre",
+            "longName": "Auxerre"
+          },
+          "eliminatedTeamId": null,
+          "statusId": 6,
+          "tournamentStage": "3",
+          "status": {
+            "utcTime": "2026-09-04T17:00:00.000Z",
+            "halfs": {
+              "firstHalfStarted": "04.09.2026 19:00:17",
+              "secondHalfStarted": "04.09.2026 20:06:41"
+            },
+            "periodLength": 45,
+            "finished": true,
+            "started": true,
+            "cancelled": false,
+            "awarded": false,
+            "scoreStr": "3 - 1",
+            "reason": {
+              "short": "FT",
+              "shortKey": "fulltime_short",
+              "long": "Full-Time",
+              "longKey": "finished"
+            }
+          },
+          "timeTS": 1788541200000
+        },
+        {
+          "id": 5802925,
+          "leagueId": 53,
+          "time": "04.09.2026 21:05",
+          "home": {
+            "id": 9847,
+            "score": 1,
+            "name": "PSG",
+            "longName": "Paris Saint-Germain"
+          },
+          "away": {
+            "id": 9829,
+            "score": 2,
+            "name": "Monaco",
+            "longName": "Monaco"
+          },
+          "eliminatedTeamId": null,
+          "statusId": 6,
+          "tournamentStage": "3",
+          "status": {
+            "utcTime": "2026-09-04T19:05:00.000Z",
+            "halfs": {
+              "firstHalfStarted": "04.09.2026 21:05:11",
+              "secondHalfStarted": "04.09.2026 22:09:17"
+            },
+            "periodLength": 45,
+            "finished": true,
+            "started": true,
+            "cancelled": false,
+            "awarded": false,
+            "scoreStr": "1 - 2",
+            "reason": {
+              "short": "FT",
+              "shortKey": "fulltime_short",
+              "long": "Full-Time",
+              "longKey": "finished"
+            }
+          },
+          "timeTS": 1788548700000
+        }
+      ]
+    },
+    {
+      "ccode": "USA",
+      "id": 913550,
+      "primaryId": 130,
+      "name": "Major League Soccer",
+      "matches": [
+        {
+          "id": 5071321,
+          "leagueId": 913550,
+          "time": "05.09.2026 01:30",
+          "home": {
+            "id": 546238,
+            "score": 0,
+            "name": "NYCFC",
+            "longName": "New York City FC"
+          },
+          "away": {
+            "id": 915807,
+            "score": 0,
+            "name": "Nashville SC",
+            "longName": "Nashville SC"
+          },
+          "eliminatedTeamId": null,
+          "statusId": 10,
+          "tournamentStage": "23",
+          "status": {
+            "utcTime": "2026-09-04T23:30:00.000Z",
+            "halfs": {
+              "firstHalfStarted": "05.09.2026 01:40:46"
+            },
+            "periodLength": 45,
+            "finished": false,
+            "started": true,
+            "cancelled": false,
+            "ongoing": true,
+            "scoreStr": "0 - 0",
+            "liveTime": {
+              "short": "HT",
+              "shortKey": "halftime_short",
+              "long": "Half-Time",
+              "longKey": "pause_match",
+              "maxTime": 45,
+              "basePeriod": 45,
+              "addedTime": 0
+            }
+          },
+          "timeTS": 1788564600000
+        }
+      ]
+    },
+    {
+      "ccode": "ITA",
+      "id": 55,
+      "primaryId": 55,
+      "name": "Serie A",
+      "matches": [
+        {
+          "id": 5749665,
+          "leagueId": 55,
+          "time": "04.09.2026 20:45",
+          "home": {
+            "id": 10233,
+            "score": 1,
+            "name": "Genoa",
+            "longName": "Genoa"
+          },
+          "away": {
+            "id": 10171,
+            "score": 4,
+            "name": "Como",
+            "longName": "Como"
+          },
+          "eliminatedTeamId": null,
+          "statusId": 6,
+          "tournamentStage": "3",
+          "status": {
+            "utcTime": "2026-09-04T18:45:00.000Z",
+            "halfs": {
+              "firstHalfStarted": "04.09.2026 20:47:10",
+              "secondHalfStarted": "04.09.2026 21:50:42"
+            },
+            "periodLength": 45,
+            "finished": true,
+            "started": true,
+            "cancelled": false,
+            "awarded": false,
+            "scoreStr": "1 - 4",
+            "reason": {
+              "short": "FT",
+              "shortKey": "fulltime_short",
+              "long": "Full-Time",
+              "longKey": "finished"
+            }
+          },
+          "timeTS": 1788547500000
+        }
+      ]
+    },
+    {
+      "ccode": "ARG",
+      "id": 916553,
+      "primaryId": 8965,
+      "name": "Primera Nacional",
+      "matches": [
+        {
+          "id": 5113450,
+          "leagueId": 916553,
+          "time": "05.09.2026 01:00",
+          "home": {
+            "id": 161733,
+            "score": 0,
+            "name": "Ferro Carril Oeste",
+            "longName": "Ferro Carril Oeste"
+          },
+          "away": {
+            "id": 568714,
+            "score": 0,
+            "name": "Club Atl\u00e9tico Mitre",
+            "longName": "Club Atl\u00e9tico Mitre"
+          },
+          "eliminatedTeamId": null,
+          "statusId": 3,
+          "tournamentStage": "28",
+          "status": {
+            "utcTime": "2026-09-04T23:00:00.000Z",
+            "halfs": {
+              "firstHalfStarted": "05.09.2026 01:06:54",
+              "secondHalfStarted": "05.09.2026 02:12:31"
+            },
+            "periodLength": 45,
+            "finished": false,
+            "started": true,
+            "cancelled": false,
+            "ongoing": true,
+            "scoreStr": "0 - 0",
+            "liveTime": {
+              "short": "75\u200e\u2019\u200e",
+              "shortKey": "",
+              "long": "74:07",
+              "longKey": "",
+              "maxTime": 90,
+              "basePeriod": 90,
+              "addedTime": 0
+            }
+          },
+          "timeTS": 1788562800000
+        }
+      ]
+    }
+  ]
+}
