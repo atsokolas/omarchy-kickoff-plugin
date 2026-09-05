@@ -56,7 +56,9 @@ BarWidget {
   property var celebrationQueue: []
   property int goalCount: 0
   readonly property bool celebrating: celebrationEvent !== null
-  readonly property string celebrationText: Model.celebrationLine(goalCount)
+  readonly property string celebrationText: celebrating
+    ? Model.celebrationLine(goalCount)
+    : Model.fullTimeCaption(settleEvent)
 
   property real ballTravel: 0   // 0 at rest, 1 buried in the net
   property real ballSpin: 0
@@ -81,11 +83,60 @@ BarWidget {
 
   function finishCelebration() {
     celebrationEvent = null
-    if (celebrationQueue.length === 0) return
-    var next = celebrationQueue[0]
-    celebrationQueue = celebrationQueue.slice(1)
-    nextGoalTimer.pending = next
-    nextGoalTimer.restart()
+    if (celebrationQueue.length) {
+      var next = celebrationQueue[0]
+      celebrationQueue = celebrationQueue.slice(1)
+      nextGoalTimer.pending = next
+      nextGoalTimer.restart()
+      return
+    }
+    if (settleQueued) {
+      var ending = settleQueued
+      settleQueued = null
+      settle(ending)
+    }
+  }
+
+  // ---- The whistle -----------------------------------------------------
+  // Full time. The ball, which has been fidgeting all match, bounces once
+  // more and comes to rest; the score gives way to the verdict for a beat.
+  // A goal already in flight finishes first — the whistle waits.
+
+  property var settleEvent: null
+  property var settleQueued: null
+  readonly property bool settling: settleEvent !== null
+  property real settleLift: 0
+
+  function settle(event) {
+    if (!event) return
+    if (celebrating || settling) {
+      settleQueued = event
+      return
+    }
+    settleEvent = event
+    settleAnimation.restart()
+  }
+
+  SequentialAnimation {
+    id: settleAnimation
+    ParallelAnimation {
+      NumberAnimation { target: root; property: "labelFade"; to: 0; duration: 170; easing.type: Easing.OutCubic }
+      NumberAnimation { target: root; property: "captionFade"; to: 1; duration: 220 }
+      // Three bounces, each lower than the last.
+      SequentialAnimation {
+        NumberAnimation { target: root; property: "settleLift"; to: 7; duration: 130; easing.type: Easing.OutQuad }
+        NumberAnimation { target: root; property: "settleLift"; to: 0; duration: 170; easing.type: Easing.InQuad }
+        NumberAnimation { target: root; property: "settleLift"; to: 3.5; duration: 100; easing.type: Easing.OutQuad }
+        NumberAnimation { target: root; property: "settleLift"; to: 0; duration: 130; easing.type: Easing.InQuad }
+        NumberAnimation { target: root; property: "settleLift"; to: 1.5; duration: 70; easing.type: Easing.OutQuad }
+        NumberAnimation { target: root; property: "settleLift"; to: 0; duration: 90; easing.type: Easing.InQuad }
+      }
+    }
+    PauseAnimation { duration: 2200 }
+    NumberAnimation { target: root; property: "captionFade"; to: 0; duration: 220 }
+    ScriptAction { script: root.settleEvent = null }
+    NumberAnimation { target: root; property: "labelFade"; to: 1; duration: 240; easing.type: Easing.OutCubic }
+    ScriptAction { script: root.finishCelebration() }
   }
 
 
@@ -171,6 +222,11 @@ BarWidget {
       root.service.demoGoal()
       return "ok"
     }
+    function whistle(): string {
+      if (!root.service || !root.service.demoFullTime) return "no service"
+      root.service.demoFullTime()
+      return "ok"
+    }
   }
 
   Loader {
@@ -188,6 +244,7 @@ BarWidget {
     target: panelLoader.item
     ignoreUnknownSignals: true
     function onGoalScored(event) { root.celebrate(event) }
+    function onMatchEnded(event) { root.settle(event) }
   }
 
   WidgetButton {
@@ -200,12 +257,12 @@ BarWidget {
     // Sized from the painted content rather than the base label, because the
     // ball comes from the emoji font and measures differently there.
     fixedWidth: root.vertical ? -1 : Math.max(12, pill.contentWidth + button.scaledHorizontalMargin * 2)
-    foreground: root.celebrating || root.live
+    foreground: root.celebrating || root.settling || root.live
       ? Color.accent
       : (root.bar ? root.bar.barForeground : Color.foreground)
     tooltipText: root.celebrating
       ? Model.goalCaption(root.celebrationEvent)
-      : (root.live ? "Live football" : Model.APP_NAME)
+      : (root.settling ? root.settleEvent.headline : (root.live ? "Live football" : Model.APP_NAME))
     horizontalMargin: 8.75
     verticalPadding: 8.75
 
@@ -242,6 +299,7 @@ BarWidget {
         y: (pill.height - height) / 2
           - Math.sin(Math.PI * root.ballTravel) * pill.arcHeight
           - idleLift
+          - root.settleLift
 
         // While a match is live the ball never sits quite still.
         property real idleTilt: 0
@@ -278,10 +336,25 @@ BarWidget {
         renderType: Text.NativeRendering
       }
 
+      Image {
+        id: crest
+        visible: !root.vertical && opacity > 0.01 && status === Image.Ready
+        source: root.celebrationEvent ? Model.teamLogoUrl(root.celebrationEvent.teamId) : ""
+        width: button.fontSize
+        height: width
+        sourceSize.width: 32
+        sourceSize.height: 32
+        fillMode: Image.PreserveAspectFit
+        asynchronous: true
+        x: pill.restX + pill.ballSize + pill.gap
+        anchors.verticalCenter: parent.verticalCenter
+        opacity: root.celebrating ? root.captionFade : 0
+      }
+
       Text {
         id: caption
         visible: !root.vertical && opacity > 0.01
-        x: pill.restX + pill.ballSize + pill.gap
+        x: pill.restX + pill.ballSize + pill.gap + (crest.visible ? crest.width + Style.spaceReal(4) : 0)
         width: Math.max(0, pill.netX - x - pill.gap)
         anchors.verticalCenter: parent.verticalCenter
         text: root.celebrationText

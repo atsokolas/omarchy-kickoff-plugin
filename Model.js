@@ -91,7 +91,8 @@ function teamLogoUrl(teamId) {
 
 function leagueLogoUrl(leagueId) {
   var id = String(leagueId || "")
-  if (!id) return ""
+  // The pinned group is ours, not a competition; there is no crest to fetch.
+  if (!id || id === PINNED_LEAGUE_ID) return ""
   return IMAGE_BASE + "/leaguelogo/" + encodeURIComponent(id) + ".png"
 }
 
@@ -561,6 +562,7 @@ function scanGoals(previous, current, accept) {
       matchId: String(id),
       side: side,
       team: team,
+      teamId: homeUp ? now.homeId : now.awayId,
       opponent: homeUp ? now.awayName : now.homeName,
       homeName: now.homeName,
       awayName: now.awayName,
@@ -589,6 +591,69 @@ function goalEvents(previous, current, followed) {
 function celebrationEvents(previous, current, followed) {
   if (parseIdList(followed).length) return goalEvents(previous, current, followed)
   return scanGoals(previous, current, null)
+}
+
+// The whistle. A match the bar was showing has just gone from live to
+// finished; same acceptance rule as the goals, so it never marks the end of
+// a match it never celebrated.
+function fullTimeEvents(previous, current, followed) {
+  var events = []
+  if (!previous || !current) return events
+  var followedList = parseIdList(followed)
+  var fol = indexIds(followedList)
+  for (var id in current) {
+    if (!Object.prototype.hasOwnProperty.call(current, id)) continue
+    var now = current[id]
+    var was = previous[id]
+    if (!now || !was || was.state !== "live" || now.state !== "finished") continue
+    var mine = fol[now.homeId] ? "home" : (fol[now.awayId] ? "away" : "")
+    if (followedList.length && !mine) continue
+    var home = Number(now.home), away = Number(now.away)
+    events.push({
+      matchId: String(id),
+      homeName: now.homeName,
+      awayName: now.awayName,
+      homeScore: home,
+      awayScore: away,
+      winner: home === away ? "" : (home > away ? "home" : "away"),
+      mine: mine,
+      leagueName: now.leagueName || "",
+      headline: "FT · " + now.homeName + " " + home + "-" + away + " " + now.awayName
+    })
+  }
+  return events
+}
+
+// What the bar says at the whistle. A followed club gets a verdict; a
+// neutral's match just gets the score.
+function fullTimeCaption(event) {
+  if (!event) return "FULL TIME"
+  var score = String(event.homeScore) + "-" + String(event.awayScore)
+  if (!event.mine) return "FT " + score
+  if (!event.winner) return "HONOURS EVEN " + score
+  return (event.winner === event.mine ? "THAT'S THE WIN " : "NEXT TIME ") + score
+}
+
+// Synthesises the whistle for the first match on screen, for the demo hook
+// (`omarchy-shell atsokolas.kickoff whistle`).
+function demoFullTimeEvent(match, followed) {
+  var m = match && match.home && match.away ? match : {
+    id: "demo", state: "live", leagueName: "",
+    home: { id: "", name: "Kickoff FC", score: 2 },
+    away: { id: "", name: "Real Nowhere", score: 1 }
+  }
+  var row = {
+    home: hasScore(m.home) ? Number(m.home.score) : 0,
+    away: hasScore(m.away) ? Number(m.away.score) : 0,
+    homeName: m.home.name, awayName: m.away.name,
+    homeId: String(m.home.id), awayId: String(m.away.id),
+    leagueName: m.leagueName || ""
+  }
+  var before = {}, after = {}
+  before[String(m.id)] = Object.assign({ state: "live" }, row)
+  after[String(m.id)] = Object.assign({ state: "finished" }, row)
+  var events = fullTimeEvents(before, after, followed)
+  return events.length ? events[0] : null
 }
 
 var CELEBRATION_LINES = [
@@ -950,6 +1015,9 @@ if (typeof module !== "undefined") {
     goalEvents: goalEvents,
     scanGoals: scanGoals,
     celebrationEvents: celebrationEvents,
+    fullTimeEvents: fullTimeEvents,
+    fullTimeCaption: fullTimeCaption,
+    demoFullTimeEvent: demoFullTimeEvent,
     celebrationLine: celebrationLine,
     goalCaption: goalCaption,
     demoGoalEvent: demoGoalEvent,

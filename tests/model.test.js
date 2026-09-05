@@ -404,3 +404,54 @@ test("compareMatches ranks live over upcoming over finished, then by kickoff", (
   const sorted = [done, later, off, live, soon].sort(Model.compareMatches)
   assert.deepEqual(sorted, [live, soon, later, done, off])
 })
+
+test("the pinned group has no crest to fetch", () => {
+  assert.equal(Model.leagueLogoUrl("followed"), "")
+  assert.equal(Model.leagueLogoUrl(""), "")
+  assert.match(Model.leagueLogoUrl("47"), /leaguelogo\/47\.png$/)
+})
+
+test("goal events name the scorer's club so the bar can show its crest", () => {
+  const before = { 1: { home: 0, away: 0, state: "live", homeName: "Arsenal", awayName: "Chelsea", homeId: "9825", awayId: "8455" } }
+  const after = { 1: { home: 0, away: 1, state: "live", homeName: "Arsenal", awayName: "Chelsea", homeId: "9825", awayId: "8455" } }
+  const [goal] = Model.celebrationEvents(before, after, [])
+  assert.equal(goal.teamId, "8455")
+  assert.equal(goal.team, "Chelsea")
+})
+
+test("the whistle blows once, when a shown match goes from live to finished", () => {
+  const row = { home: 2, away: 1, homeName: "Arsenal", awayName: "Chelsea", homeId: "9825", awayId: "8455", leagueName: "Premier League" }
+  const live = { 1: Object.assign({ state: "live" }, row) }
+  const done = { 1: Object.assign({ state: "finished" }, row) }
+  assert.equal(Model.fullTimeEvents(live, done, []).length, 1)
+  assert.equal(Model.fullTimeEvents(done, done, []).length, 0)
+  assert.equal(Model.fullTimeEvents(live, live, []).length, 0)
+  // An upcoming match cancelled straight to finished never blew a whistle.
+  assert.equal(Model.fullTimeEvents({ 1: Object.assign({ state: "upcoming" }, row) }, done, []).length, 0)
+  // Following a club narrows it to their matches.
+  assert.equal(Model.fullTimeEvents(live, done, ["8455"]).length, 1)
+  assert.equal(Model.fullTimeEvents(live, done, ["1"]).length, 0)
+  const [event] = Model.fullTimeEvents(live, done, ["8455"])
+  assert.equal(event.headline, "FT · Arsenal 2-1 Chelsea")
+  assert.equal(event.winner, "home")
+  assert.equal(event.mine, "away")
+})
+
+test("the whistle's caption gives a followed club a verdict and a neutral the score", () => {
+  const base = { homeScore: 2, awayScore: 1, winner: "home" }
+  assert.equal(Model.fullTimeCaption(Object.assign({ mine: "home" }, base)), "THAT'S THE WIN 2-1")
+  assert.equal(Model.fullTimeCaption(Object.assign({ mine: "away" }, base)), "NEXT TIME 2-1")
+  assert.equal(Model.fullTimeCaption({ homeScore: 1, awayScore: 1, winner: "", mine: "home" }), "HONOURS EVEN 1-1")
+  assert.equal(Model.fullTimeCaption(Object.assign({ mine: "" }, base)), "FT 2-1")
+  assert.equal(Model.fullTimeCaption(null), "FULL TIME")
+})
+
+test("demoFullTimeEvent ends whatever is on screen, or a made-up match", () => {
+  const made = Model.demoFullTimeEvent(null, [])
+  assert.equal(made.headline, "FT · Kickoff FC 2-1 Real Nowhere")
+  const match = Model.normalizeMatch(sampleMatch(), { id: 47, name: "Premier League" })
+  const real = Model.demoFullTimeEvent(match, ["9825"])
+  assert.equal(real.mine, "home")
+  assert.equal(real.winner, "home")
+  assert.equal(Model.fullTimeCaption(real), "THAT'S THE WIN 1-0")
+})

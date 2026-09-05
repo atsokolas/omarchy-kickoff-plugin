@@ -33,6 +33,8 @@ Item {
   // path: toasts stay followed-clubs-only, this follows whatever the bar is
   // actually showing.
   signal goalScored(var event)
+  // The whistle: a match the bar was showing has just finished.
+  signal matchEnded(var event)
 
   // matchId -> timestamp, so a row that just scored can flash in the panel.
   property var goalFlashIds: ({})
@@ -118,6 +120,8 @@ Item {
         enqueueToasts(Model.goalEvents(_previousScores, current, followedTeams))
       var celebrations = Model.celebrationEvents(_previousScores, current, followedTeams)
       for (var c = 0; c < celebrations.length; c++) noteGoal(celebrations[c])
+      var endings = Model.fullTimeEvents(_previousScores, current, followedTeams)
+      for (var e = 0; e < endings.length; e++) matchEnded(endings[e])
     }
     _previousScores = current
     leagues = parsed.leagues
@@ -233,6 +237,12 @@ Item {
     var matches = Model.flattenMatches(visibleLeagues)
     var event = Model.demoGoalEvent(matches.length ? matches[0] : null)
     if (event) noteGoal(event)
+  }
+
+  function demoFullTime() {
+    var matches = Model.flattenMatches(visibleLeagues)
+    var event = Model.demoFullTimeEvent(matches.length ? matches[0] : null, followedTeams)
+    if (event) matchEnded(event)
   }
 
   function justScored(matchId) {

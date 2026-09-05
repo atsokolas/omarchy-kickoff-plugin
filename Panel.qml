@@ -50,11 +50,13 @@ Panel {
 
   // Relayed to the bar widget, which owns the ball-into-net animation.
   signal goalScored(var event)
+  signal matchEnded(var event)
 
   Connections {
     target: root.service
     ignoreUnknownSignals: true
     function onGoalScored(event) { root.goalScored(event) }
+    function onMatchEnded(event) { root.matchEnded(event) }
   }
 
   readonly property var featuredLeagues: Model.FEATURED_LEAGUES
