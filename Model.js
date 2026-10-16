@@ -963,8 +963,26 @@ function emptyDayLine(seed) {
   return pickLine(EMPTY_DAY_LINES, seed)
 }
 
+// The theme's palette from colors.toml: accent for what's live, red for
+// what went wrong. The shell's Color singleton isn't reliably visible to
+// third-party plugins, so Kickoff reads the file itself.
+function parseColors(toml) {
+  var out = {}
+  var lines = String(toml || "").split("\n")
+  for (var i = 0; i < lines.length; i++) {
+    var m = lines[i].match(/^\s*([a-z_]+)\s*=\s*"([^"]*)"/)
+    if (m) out[m[1]] = m[2]
+  }
+  var hex = /^#[0-9a-fA-F]{6}$/
+  if (!hex.test(out.foreground || "")) return null
+  var fg = out.foreground.toLowerCase()
+  var accent = hex.test(out.accent || "") ? out.accent.toLowerCase() : fg
+  return { foreground: fg, accent: accent, red: hex.test(out.red || "") ? out.red.toLowerCase() : accent }
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
+    parseColors: parseColors,
     API_BASE: API_BASE,
     SOCCER_GLYPH: SOCCER_GLYPH,
     BALL_GLYPH: BALL_GLYPH,

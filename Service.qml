@@ -12,6 +12,9 @@ Item {
   property var settings: ({})
   property bool active: true
 
+  readonly property string colorsPath: Quickshell.env("HOME") + "/.local/state/omarchy/current/theme/colors.toml"
+  property var palette: null
+
   property var leagues: []
   property string dateKey: Model.dateKeyFromDate(new Date())
   property string todayKey: Model.dateKeyFromDate(new Date())
@@ -379,5 +382,14 @@ Item {
       root.todayKey = today
       if (wasToday) root.setDateKey(today)
     }
+  }
+
+  FileView {
+    path: root.colorsPath
+    watchChanges: true
+    printErrors: false
+    onLoaded: root.palette = Model.parseColors(text())
+    onLoadFailed: root.palette = null
+    onFileChanged: reload()
   }
 }

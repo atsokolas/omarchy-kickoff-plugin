@@ -9,7 +9,7 @@ Item {
   property bool selected: false
   property color foreground: Color.foreground
   property color dim: Qt.darker(foreground, 1.55)
-  property color accent: Color.accent
+  property color accent: foreground
   property string fontFamily: Style.font.family
   property string emojiFamily: "Noto Color Emoji"
   // matchId -> timestamp map from the service; a row in it scored recently.

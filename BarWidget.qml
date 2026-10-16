@@ -29,6 +29,9 @@ BarWidget {
   }
 
   readonly property var service: panelLoader.item ? panelLoader.item.service : null
+  // Accent and warning come from the theme palette: the shell's Color
+  // singleton isn't reliably visible to third-party plugins.
+  readonly property color accent: service && service.palette ? service.palette.accent : (bar ? bar.barForeground : Color.foreground)
   readonly property bool opened: panelLoader.item ? panelLoader.item.opened === true : false
   readonly property bool live: panelLoader.item ? panelLoader.item.live === true : false
   readonly property string label: panelLoader.item ? panelLoader.item.label : Model.APP_NAME
@@ -258,7 +261,7 @@ BarWidget {
     // ball comes from the emoji font and measures differently there.
     fixedWidth: root.vertical ? -1 : Math.max(12, pill.contentWidth + button.scaledHorizontalMargin * 2)
     foreground: root.celebrating || root.settling || root.live
-      ? Color.accent
+      ? root.accent
       : (root.bar ? root.bar.barForeground : Color.foreground)
     tooltipText: root.celebrating
       ? Model.goalCaption(root.celebrationEvent)
@@ -359,7 +362,7 @@ BarWidget {
         anchors.verticalCenter: parent.verticalCenter
         text: root.celebrationText
         opacity: root.captionFade
-        color: Color.accent
+        color: root.accent
         font.family: button.fontFamily
         font.pixelSize: button.fontSize
         font.bold: true
@@ -375,7 +378,7 @@ BarWidget {
         radius: width / 2
         color: "transparent"
         border.width: Math.max(1, Style.spaceReal(1.5))
-        border.color: Color.accent
+        border.color: root.accent
         transformOrigin: Item.Center
         x: net.x + net.width / 2 - width / 2
         y: net.y + net.height / 2 - height / 2

@@ -25,6 +25,11 @@ Panel {
   readonly property var barIdentity: hostWidget || root
   readonly property color foreground: bar ? bar.foreground : Color.foreground
   readonly property color dim: Qt.darker(foreground, 1.55)
+  // Accent and warning come from the theme palette: the shell's Color
+  // singleton isn't reliably visible to third-party plugins.
+  readonly property var palette: service ? service.palette : null
+  readonly property color accent: palette ? palette.accent : foreground
+  readonly property color urgent: palette ? palette.red : foreground
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
   property string emojiFamily: "Noto Color Emoji"
 
@@ -268,7 +273,7 @@ Panel {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             iconSize: Style.font.display
-            iconColor: root.live ? Color.accent : root.foreground
+            iconColor: root.live ? root.accent : root.foreground
           }
 
           Column {
@@ -300,7 +305,7 @@ Panel {
                 finishedCount: root.dayTally.finished,
                 seed: service.dateKey
               })
-              color: service.lastError !== "" ? Color.urgent : root.dim
+              color: service.lastError !== "" ? root.urgent : root.dim
               font.family: root.fontFamily
               font.pixelSize: Style.font.bodySmall
               elide: Text.ElideRight
@@ -406,7 +411,7 @@ Panel {
               selected: root.tab === "matches"
               foreground: root.foreground
               background: "transparent"
-              accent: Color.accent
+              accent: root.accent
               fontFamily: root.fontFamily
               fontSize: Style.font.caption
               horizontalPadding: Style.space(7)
@@ -419,7 +424,7 @@ Panel {
               selected: root.tab === "following"
               foreground: root.foreground
               background: "transparent"
-              accent: Color.accent
+              accent: root.accent
               fontFamily: root.fontFamily
               fontSize: Style.font.caption
               horizontalPadding: Style.space(7)
@@ -432,7 +437,7 @@ Panel {
               selected: root.tab === "table"
               foreground: root.foreground
               background: "transparent"
-              accent: Color.accent
+              accent: root.accent
               fontFamily: root.fontFamily
               fontSize: Style.font.caption
               horizontalPadding: Style.space(7)
@@ -549,7 +554,7 @@ Panel {
                   Text {
                     text: leagueBlock.league.name
                     // The pinned group earns the accent; competitions stay grey.
-                    color: leagueBlock.league.pinned ? Color.accent : root.dim
+                    color: leagueBlock.league.pinned ? root.accent : root.dim
                     font.family: root.fontFamily
                     font.pixelSize: Style.font.caption
                     font.bold: true
@@ -577,7 +582,7 @@ Panel {
                     selected: root.selectedMatchId === String(modelData.id)
                     foreground: root.foreground
                     dim: root.dim
-                    accent: Color.accent
+                    accent: root.accent
                     fontFamily: root.fontFamily
                     goalFlashIds: service.goalFlashIds
                     showCompetition: leagueBlock.league.pinned === true
@@ -616,7 +621,7 @@ Panel {
                 selected: root.selectedMatchId === String(modelData.id)
                 foreground: root.foreground
                 dim: root.dim
-                accent: Color.accent
+                accent: root.accent
                 fontFamily: root.fontFamily
                 goalFlashIds: service.goalFlashIds
                 onClicked: root.openMatch(modelData)
@@ -650,7 +655,7 @@ Panel {
                       selected: String(service.tableLeagueId) === String(modelData.id)
                       foreground: root.foreground
                       background: "transparent"
-                      accent: Color.accent
+                      accent: root.accent
                       fontFamily: root.fontFamily
                       fontSize: Style.font.caption
                       horizontalPadding: Style.space(8)
@@ -672,7 +677,7 @@ Panel {
               Text {
                 visible: service.tableError !== ""
                 text: service.tableError
-                color: Color.urgent
+                color: root.urgent
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.body
                 wrapMode: Text.WordWrap
@@ -791,7 +796,7 @@ Panel {
             Text {
               visible: service.detailError !== ""
               text: service.detailError
-              color: Color.urgent
+              color: root.urgent
               font.family: root.fontFamily
               font.pixelSize: Style.font.body
               wrapMode: Text.WordWrap
@@ -850,7 +855,7 @@ Panel {
                   Text {
                     width: parent.width
                     text: service.matchDetail ? service.matchDetail.clock : ""
-                    color: service.matchDetail && service.matchDetail.state === "live" ? Color.accent : root.dim
+                    color: service.matchDetail && service.matchDetail.state === "live" ? root.accent : root.dim
                     font.family: root.fontFamily
                     font.pixelSize: Style.font.caption
                     font.bold: true
@@ -894,7 +899,7 @@ Panel {
                   selected: service.matchDetail && Model.isFollowed(service.followedTeams, service.matchDetail.home.id)
                   foreground: root.foreground
                   background: "transparent"
-                  accent: Color.accent
+                  accent: root.accent
                   fontFamily: root.fontFamily
                   fontSize: Style.font.caption
                   horizontalPadding: Style.space(8)
@@ -908,7 +913,7 @@ Panel {
                   selected: service.matchDetail && Model.isFollowed(service.followedTeams, service.matchDetail.away.id)
                   foreground: root.foreground
                   background: "transparent"
-                  accent: Color.accent
+                  accent: root.accent
                   fontFamily: root.fontFamily
                   fontSize: Style.font.caption
                   horizontalPadding: Style.space(8)
@@ -929,7 +934,7 @@ Panel {
                   Text {
                     width: Style.space(40)
                     text: modelData.clock
-                    color: modelData.type === "Goal" ? Color.accent : root.dim
+                    color: modelData.type === "Goal" ? root.accent : root.dim
                     font.family: root.fontFamily
                     font.pixelSize: Style.font.caption
                     font.bold: modelData.type === "Goal"
@@ -988,7 +993,7 @@ Panel {
                 text: "OPEN MATCH"
                 foreground: root.foreground
                 background: "transparent"
-                accent: Color.accent
+                accent: root.accent
                 fontFamily: root.fontFamily
                 fontSize: Style.font.caption
                 horizontalPadding: Style.space(8)
@@ -1023,7 +1028,7 @@ Panel {
               description: "Toast when a followed club scores."
               checked: service.notify
               foreground: root.foreground
-              accent: Color.accent
+              accent: root.accent
               fontFamily: root.fontFamily
               onClicked: root.toggleNotify()
             }
@@ -1034,7 +1039,7 @@ Panel {
               description: "Show every league on Matches, not just the featured set."
               checked: service.matchesFilter === "all"
               foreground: root.foreground
-              accent: Color.accent
+              accent: root.accent
               fontFamily: root.fontFamily
               onClicked: root.toggleAllCompetitions()
             }
@@ -1104,7 +1109,7 @@ Panel {
                   selected: Model.isFollowed(service.followedTeams, modelData.id)
                   foreground: root.foreground
                   background: "transparent"
-                  accent: Color.accent
+                  accent: root.accent
                   fontFamily: root.fontFamily
                   fontSize: Style.font.caption
                   horizontalPadding: Style.space(8)
@@ -1146,7 +1151,7 @@ Panel {
                   text: "REMOVE"
                   foreground: root.foreground
                   background: "transparent"
-                  accent: Color.accent
+                  accent: root.accent
                   fontFamily: root.fontFamily
                   fontSize: Style.font.caption
                   horizontalPadding: Style.space(8)

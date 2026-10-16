@@ -455,3 +455,10 @@ test("demoFullTimeEvent ends whatever is on screen, or a made-up match", () => {
   assert.equal(real.winner, "home")
   assert.equal(Model.fullTimeCaption(real), "THAT'S THE WIN 1-0")
 })
+
+test("the theme's accent and red are read from colors.toml", () => {
+  const c = Model.parseColors('accent = "#7AA2F7"\nforeground = "#a9b1d6"\nred = "#f7768e"\n')
+  assert.deepEqual(c, { foreground: "#a9b1d6", accent: "#7aa2f7", red: "#f7768e" })
+  assert.equal(Model.parseColors('foreground = "#a9b1d6"').accent, "#a9b1d6")
+  assert.equal(Model.parseColors(""), null)
+})
