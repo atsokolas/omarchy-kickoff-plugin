@@ -23,7 +23,7 @@ Panel {
   property bool cursorActive: false
 
   readonly property var barIdentity: hostWidget || root
-  readonly property color foreground: bar ? bar.foreground : Color.foreground
+  readonly property color foreground: bar ? bar.foreground : (service && service.palette ? service.palette.foreground : "#cccccc")
   readonly property color dim: Qt.darker(foreground, 1.55)
   // Accent and warning come from the theme palette: the shell's Color
   // singleton isn't reliably visible to third-party plugins.
@@ -545,7 +545,7 @@ Panel {
                     width: Style.space(16)
                     height: Style.space(16)
                     anchors.verticalCenter: parent.verticalCenter
-                    source: Model.leagueLogoUrl(leagueBlock.league.id)
+                    source: Model.leagueLogoUrl(leagueBlock.league.primaryId || leagueBlock.league.id)
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
                     visible: status === Image.Ready

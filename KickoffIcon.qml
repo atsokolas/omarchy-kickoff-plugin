@@ -6,7 +6,7 @@ Text {
   id: root
 
   property real iconSize: Style.font.icon
-  property color iconColor: Color.foreground
+  property color iconColor: "#cccccc"
   // The ball comes from the emoji font; the shell's Nerd Font has no glyph.
   property string emojiFamily: "Noto Color Emoji"
   // Set while something is live — the ball rocks gently instead of sitting still.

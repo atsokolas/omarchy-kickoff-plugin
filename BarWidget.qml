@@ -31,7 +31,7 @@ BarWidget {
   readonly property var service: panelLoader.item ? panelLoader.item.service : null
   // Accent and warning come from the theme palette: the shell's Color
   // singleton isn't reliably visible to third-party plugins.
-  readonly property color accent: service && service.palette ? service.palette.accent : (bar ? bar.barForeground : Color.foreground)
+  readonly property color accent: service && service.palette ? service.palette.accent : (bar ? bar.barForeground : "#cccccc")
   readonly property bool opened: panelLoader.item ? panelLoader.item.opened === true : false
   readonly property bool live: panelLoader.item ? panelLoader.item.live === true : false
   readonly property string label: panelLoader.item ? panelLoader.item.label : Model.APP_NAME
@@ -262,7 +262,7 @@ BarWidget {
     fixedWidth: root.vertical ? -1 : Math.max(12, pill.contentWidth + button.scaledHorizontalMargin * 2)
     foreground: root.celebrating || root.settling || root.live
       ? root.accent
-      : (root.bar ? root.bar.barForeground : Color.foreground)
+      : (root.bar ? root.bar.barForeground : "#cccccc")
     tooltipText: root.celebrating
       ? Model.goalCaption(root.celebrationEvent)
       : (root.settling ? root.settleEvent.headline : (root.live ? "Live football" : Model.APP_NAME))

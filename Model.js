@@ -196,6 +196,9 @@ function normalizeMatch(raw, league) {
   return {
     id: String(m.id || ""),
     leagueId: String(m.leagueId || lg.id || ""),
+    // A season stage (MLS playoffs, a Europa League phase) has its own id but
+    // no crest of its own; the competition's primary id has one.
+    primaryLeagueId: String(lg.primaryId || m.leagueId || lg.id || ""),
     leagueName: String(lg.name || ""),
     country: String(lg.ccode || ""),
     time: String(m.time || ""),
@@ -983,6 +986,7 @@ function parseColors(toml) {
 if (typeof module !== "undefined") {
   module.exports = {
     parseColors: parseColors,
+    normalizeLeague: normalizeLeague,
     API_BASE: API_BASE,
     SOCCER_GLYPH: SOCCER_GLYPH,
     BALL_GLYPH: BALL_GLYPH,

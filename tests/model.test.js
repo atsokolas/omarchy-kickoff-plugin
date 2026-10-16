@@ -462,3 +462,11 @@ test("the theme's accent and red are read from colors.toml", () => {
   assert.equal(Model.parseColors('foreground = "#a9b1d6"').accent, "#a9b1d6")
   assert.equal(Model.parseColors(""), null)
 })
+
+test("a season stage borrows its competition's crest", () => {
+  const lg = Model.normalizeLeague({ id: 913550, primaryId: 130, name: "Major League Soccer", matches: [{ id: 1, leagueId: 913550, status: {} }] })
+  assert.equal(lg.id, "913550")
+  assert.equal(lg.primaryId, "130")
+  assert.equal(lg.matches[0].primaryLeagueId, "130")
+  assert.match(Model.leagueLogoUrl(lg.primaryId), /leaguelogo\/130\.png$/)
+})

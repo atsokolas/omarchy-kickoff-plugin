@@ -7,7 +7,7 @@ Item {
 
   property var match: null
   property bool selected: false
-  property color foreground: Color.foreground
+  property color foreground: "#cccccc"
   property color dim: Qt.darker(foreground, 1.55)
   property color accent: foreground
   property string fontFamily: Style.font.family
@@ -111,7 +111,7 @@ Item {
         anchors.centerIn: parent
         width: Style.space(13)
         height: Style.space(13)
-        source: root.showCompetition && root.match ? Model.leagueLogoUrl(root.match.leagueId) : ""
+        source: root.showCompetition && root.match ? Model.leagueLogoUrl(root.match.primaryLeagueId || root.match.leagueId) : ""
         fillMode: Image.PreserveAspectFit
         asynchronous: true
         visible: !root.live && status === Image.Ready
