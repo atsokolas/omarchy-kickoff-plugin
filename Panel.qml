@@ -286,6 +286,7 @@ Panel {
             spacing: Style.space(2)
 
             Text {
+              textFormat: Text.PlainText
               text: root.page === "match" && service.matchDetail ? service.matchDetail.leagueName : Model.APP_NAME
               color: root.foreground
               font.family: root.fontFamily
@@ -296,6 +297,7 @@ Panel {
             }
 
             Text {
+              textFormat: Text.PlainText
               width: parent.width
               text: Model.heroLine({
                 error: service.lastError,
@@ -382,6 +384,7 @@ Panel {
               Layout.preferredHeight: Style.space(22)
 
               Text {
+                textFormat: Text.PlainText
                 anchors.centerIn: parent
                 text: Model.dateHeading(service.dateKey, service.todayKey)
                 color: root.foreground
@@ -480,6 +483,7 @@ Panel {
                 height: Style.space(24)
 
                 Text {
+                  textFormat: Text.PlainText
                   id: idleBall
                   text: Model.BALL_GLYPH
                   font.family: root.emojiFamily
@@ -519,6 +523,7 @@ Panel {
               }
 
               Text {
+                textFormat: Text.PlainText
                 width: parent.width
                 text: Model.emptyDayLine(service.dateKey)
                 color: root.dim
@@ -546,12 +551,16 @@ Panel {
                     height: Style.space(16)
                     anchors.verticalCenter: parent.verticalCenter
                     source: Model.leagueLogoUrl(leagueBlock.league.primaryId || leagueBlock.league.id)
+                    // Decode crests small, whatever size the host sends.
+                    sourceSize.width: 64
+                    sourceSize.height: 64
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
                     visible: status === Image.Ready
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     text: leagueBlock.league.name
                     // The pinned group earns the accent; competitions stay grey.
                     color: leagueBlock.league.pinned ? root.accent : root.dim
@@ -565,6 +574,7 @@ Panel {
                   Item { width: Style.space(4); height: 1 }
 
                   Text {
+                    textFormat: Text.PlainText
                     text: leagueBlock.league.country
                     color: root.dim
                     font.family: root.fontFamily
@@ -593,6 +603,7 @@ Panel {
             }
 
             Text {
+              textFormat: Text.PlainText
               visible: root.tab === "following" && service.followedTeams.length === 0
               width: parent.width
               text: "Follow clubs in Settings to pin their matches here and get goal notifications."
@@ -603,6 +614,7 @@ Panel {
             }
 
             Text {
+              textFormat: Text.PlainText
               visible: root.tab === "following" && service.followedTeams.length > 0 && service.followedMatches.length === 0
               width: parent.width
               text: "None of your teams play on this date."
@@ -667,6 +679,7 @@ Panel {
               }
 
               Text {
+                textFormat: Text.PlainText
                 visible: service.tableLoading
                 text: "Loading table…"
                 color: root.dim
@@ -675,6 +688,7 @@ Panel {
               }
 
               Text {
+                textFormat: Text.PlainText
                 visible: service.tableError !== ""
                 text: service.tableError
                 color: root.urgent
@@ -689,11 +703,11 @@ Panel {
                 visible: service.table.rows && service.table.rows.length > 0
                 spacing: Style.space(8)
 
-                Text { width: Style.space(22); text: "#"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true }
-                Text { width: parent.width - Style.space(148); text: "CLUB"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true }
-                Text { width: Style.space(28); text: "P"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true; horizontalAlignment: Text.AlignRight }
-                Text { width: Style.space(36); text: "GD"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true; horizontalAlignment: Text.AlignRight }
-                Text { width: Style.space(36); text: "PTS"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true; horizontalAlignment: Text.AlignRight }
+                Text { textFormat: Text.PlainText; width: Style.space(22); text: "#"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true }
+                Text { textFormat: Text.PlainText; width: parent.width - Style.space(148); text: "CLUB"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true }
+                Text { textFormat: Text.PlainText; width: Style.space(28); text: "P"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true; horizontalAlignment: Text.AlignRight }
+                Text { textFormat: Text.PlainText; width: Style.space(36); text: "GD"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true; horizontalAlignment: Text.AlignRight }
+                Text { textFormat: Text.PlainText; width: Style.space(36); text: "PTS"; color: root.dim; font.family: root.fontFamily; font.pixelSize: Style.font.caption; font.bold: true; horizontalAlignment: Text.AlignRight }
               }
 
               Repeater {
@@ -713,6 +727,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: Style.space(18)
                     text: String(modelData.pos)
                     color: root.foreground
@@ -722,6 +737,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width - Style.space(154)
                     text: modelData.name
                     color: root.foreground
@@ -732,6 +748,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: Style.space(28)
                     text: String(modelData.played)
                     color: root.dim
@@ -742,6 +759,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: Style.space(36)
                     text: (Number(modelData.gd) > 0 ? "+" : "") + String(modelData.gd)
                     color: root.dim
@@ -752,6 +770,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: Style.space(36)
                     text: String(modelData.pts)
                     color: root.foreground
@@ -786,6 +805,7 @@ Panel {
             spacing: Style.space(14)
 
             Text {
+              textFormat: Text.PlainText
               visible: service.detailLoading && !service.matchDetail
               text: "Loading match…"
               color: root.dim
@@ -794,6 +814,7 @@ Panel {
             }
 
             Text {
+              textFormat: Text.PlainText
               visible: service.detailError !== ""
               text: service.detailError
               color: root.urgent
@@ -821,11 +842,14 @@ Panel {
                     width: Style.space(36)
                     height: Style.space(36)
                     source: service.matchDetail ? service.matchDetail.home.imageUrl : ""
+                    sourceSize.width: 96
+                    sourceSize.height: 96
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width
                     text: service.matchDetail ? service.matchDetail.home.name : ""
                     color: root.foreground
@@ -843,6 +867,7 @@ Panel {
                   spacing: Style.space(2)
 
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width
                     text: service.matchDetail ? Model.scoreLabel(service.matchDetail) : ""
                     color: root.foreground
@@ -853,6 +878,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width
                     text: service.matchDetail ? service.matchDetail.clock : ""
                     color: service.matchDetail && service.matchDetail.state === "live" ? root.accent : root.dim
@@ -872,11 +898,14 @@ Panel {
                     width: Style.space(36)
                     height: Style.space(36)
                     source: service.matchDetail ? service.matchDetail.away.imageUrl : ""
+                    sourceSize.width: 96
+                    sourceSize.height: 96
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width
                     text: service.matchDetail ? service.matchDetail.away.name : ""
                     color: root.foreground
@@ -932,6 +961,7 @@ Panel {
                   spacing: Style.space(10)
 
                   Text {
+                    textFormat: Text.PlainText
                     width: Style.space(40)
                     text: modelData.clock
                     color: modelData.type === "Goal" ? root.accent : root.dim
@@ -941,6 +971,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width - Style.space(50)
                     text: (modelData.type === "Goal" ? "⚽ " : (modelData.card === "Yellow" ? "■ " : (modelData.card === "Red" ? "■ " : ""))) + modelData.label
                     color: modelData.isHome ? root.foreground : root.dim
@@ -959,6 +990,7 @@ Panel {
                   spacing: Style.space(8)
 
                   Text {
+                    textFormat: Text.PlainText
                     width: Style.space(48)
                     text: String(modelData.home)
                     color: root.foreground
@@ -969,6 +1001,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width - Style.space(104)
                     text: modelData.title
                     color: root.dim
@@ -979,6 +1012,7 @@ Panel {
                   }
 
                   Text {
+                    textFormat: Text.PlainText
                     width: Style.space(48)
                     text: String(modelData.away)
                     color: root.foreground
@@ -1078,6 +1112,8 @@ Panel {
                   height: Style.space(18)
                   anchors.verticalCenter: parent.verticalCenter
                   source: Model.teamLogoUrl(modelData.id)
+                  sourceSize.width: 64
+                  sourceSize.height: 64
                   fillMode: Image.PreserveAspectFit
                   asynchronous: true
                 }
@@ -1086,6 +1122,7 @@ Panel {
                   width: parent.width - Style.space(110)
                   anchors.verticalCenter: parent.verticalCenter
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width
                     text: modelData.name
                     color: root.foreground
@@ -1094,6 +1131,7 @@ Panel {
                     elide: Text.ElideRight
                   }
                   Text {
+                    textFormat: Text.PlainText
                     width: parent.width
                     text: modelData.leagueName
                     color: root.dim
@@ -1132,11 +1170,14 @@ Panel {
                   height: Style.space(16)
                   anchors.verticalCenter: parent.verticalCenter
                   source: Model.teamLogoUrl(modelData.id)
+                  sourceSize.width: 64
+                  sourceSize.height: 64
                   fillMode: Image.PreserveAspectFit
                   asynchronous: true
                 }
 
                 Text {
+                  textFormat: Text.PlainText
                   width: parent.width - Style.space(90)
                   text: modelData.name
                   color: root.foreground
@@ -1162,6 +1203,7 @@ Panel {
             }
 
             Text {
+              textFormat: Text.PlainText
               width: parent.width
               text: "Left-click the bar for scores, right-click to refresh. ⚽ marks a live game, 🥅 sits with whoever is ahead. Keys: 1/2/3 tabs, h/l dates, j/k matches, s settings, n notifications, t today."
               color: root.dim

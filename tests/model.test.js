@@ -52,10 +52,11 @@ test("curl and resource URLs stay on the upstream feed host", () => {
   assert.equal(Model.matchDetailsUrl("5795441"), "https://www.fotmob.com/api/data/matchDetails?matchId=5795441")
   assert.equal(Model.searchUrl("real madrid"), "https://www.fotmob.com/api/data/search/suggest?term=real%20madrid")
   assert.match(Model.teamLogoUrl(9825), /teamlogo\/9825_small\.png$/)
-  const curl = Model.curlCommand(Model.matchesUrl("20260904"), 12)
-  assert.equal(curl[0], "curl")
-  assert.ok(curl.indexOf("Accept: application/json") !== -1)
-  assert.ok(curl.indexOf(Model.matchesUrl("20260904")) !== -1)
+  const curl = Model.curlCommand(Model.matchesUrl("20260904"), 12, 1000)
+  assert.deepEqual(curl.slice(0, 2), ["bash", "-c"])
+  assert.match(curl[2], /curl -fsS --max-time "\$1" --max-filesize "\$2"/)
+  assert.match(curl[2], /Accept: application\/json/)
+  assert.deepEqual(curl.slice(4), ["12", "1000", curl[6], Model.matchesUrl("20260904")])
 })
 
 test("parseMatches groups today's fixtures and cleans live clocks", () => {

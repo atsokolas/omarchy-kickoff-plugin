@@ -90,6 +90,7 @@ Item {
       height: parent.height
 
       Text {
+        textFormat: Text.PlainText
         id: liveBall
         anchors.centerIn: parent
         visible: root.live
@@ -112,6 +113,9 @@ Item {
         width: Style.space(13)
         height: Style.space(13)
         source: root.showCompetition && root.match ? Model.leagueLogoUrl(root.match.primaryLeagueId || root.match.leagueId) : ""
+        // Decode crests small, whatever size the host sends.
+        sourceSize.width: 64
+        sourceSize.height: 64
         fillMode: Image.PreserveAspectFit
         asynchronous: true
         visible: !root.live && status === Image.Ready
@@ -126,6 +130,8 @@ Item {
         width: Style.space(16)
         height: Style.space(16)
         source: match && match.home ? Model.teamLogoUrl(match.home.id) : ""
+        sourceSize.width: 64
+        sourceSize.height: 64
         fillMode: Image.PreserveAspectFit
         asynchronous: true
         visible: status === Image.Ready
@@ -135,6 +141,8 @@ Item {
         width: Style.space(16)
         height: Style.space(16)
         source: match && match.away ? Model.teamLogoUrl(match.away.id) : ""
+        sourceSize.width: 64
+        sourceSize.height: 64
         fillMode: Image.PreserveAspectFit
         asynchronous: true
         visible: status === Image.Ready
@@ -151,6 +159,7 @@ Item {
         spacing: Style.space(6)
 
         Text {
+          textFormat: Text.PlainText
           width: parent.width - (homeNet.visible ? homeNet.width + Style.space(6) : 0)
           text: match && match.home ? match.home.name : ""
           color: root.foreground
@@ -163,6 +172,7 @@ Item {
 
         // The net goes to whoever is ahead — mid-game or at full time.
         Text {
+          textFormat: Text.PlainText
           id: homeNet
           visible: root.winner === "home"
           text: Model.NET_GLYPH
@@ -177,6 +187,7 @@ Item {
         spacing: Style.space(6)
 
         Text {
+          textFormat: Text.PlainText
           width: parent.width - (awayNet.visible ? awayNet.width + Style.space(6) : 0)
           text: match && match.away ? match.away.name : ""
           color: root.foreground
@@ -188,6 +199,7 @@ Item {
         }
 
         Text {
+          textFormat: Text.PlainText
           id: awayNet
           visible: root.winner === "away"
           text: Model.NET_GLYPH
@@ -206,6 +218,7 @@ Item {
       scale: 1 + root.goalFlash * 0.14
 
       Text {
+        textFormat: Text.PlainText
         width: parent.width
         text: root.upcoming ? "" : (match && match.home && match.home.score !== null ? String(match.home.score) : "")
         color: root.foreground
@@ -221,6 +234,7 @@ Item {
         layoutDirection: Qt.RightToLeft
 
         Text {
+          textFormat: Text.PlainText
           text: root.clock
           color: root.clockColor
           font.family: root.fontFamily
@@ -229,6 +243,7 @@ Item {
         }
 
         Text {
+          textFormat: Text.PlainText
           visible: !root.upcoming
           text: match && match.away && match.away.score !== null ? String(match.away.score) : ""
           color: root.foreground

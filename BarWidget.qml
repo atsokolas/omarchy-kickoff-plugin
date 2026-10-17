@@ -291,6 +291,7 @@ BarWidget {
       readonly property real arcHeight: Math.min(height * 0.3, Style.spaceReal(11))
 
       Text {
+        textFormat: Text.PlainText
         id: ball
         text: Model.BALL_GLYPH
         font.family: root.emojiFamily
@@ -327,6 +328,7 @@ BarWidget {
       }
 
       Text {
+        textFormat: Text.PlainText
         id: labelText
         visible: !root.vertical && opacity > 0.01
         x: pill.restX + pill.ballSize + pill.gap
@@ -355,6 +357,7 @@ BarWidget {
       }
 
       Text {
+        textFormat: Text.PlainText
         id: caption
         visible: !root.vertical && opacity > 0.01
         x: pill.restX + pill.ballSize + pill.gap + (crest.visible ? crest.width + Style.spaceReal(4) : 0)
@@ -387,6 +390,7 @@ BarWidget {
       }
 
       Text {
+        textFormat: Text.PlainText
         id: net
         text: Model.NET_GLYPH
         font.family: root.emojiFamily

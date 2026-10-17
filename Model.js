@@ -11,6 +11,17 @@ var BALL_GLYPH = "⚽"
 var NET_GLYPH = "🥅"
 var SOCCER_GLYPH = BALL_GLYPH
 var APP_NAME = "Kickoff"
+// Hard ceilings on what the feed may send, about ten to twenty times the
+// largest real responses (a busy Saturday is ~420 KB, a league ~850 KB).
+// Anything bigger is refused before it reaches the shell's memory.
+var FEED_LIMITS = {
+  matches: 8 * 1024 * 1024,
+  details: 4 * 1024 * 1024,
+  league: 12 * 1024 * 1024,
+  search: 512 * 1024
+}
+// curl's exit code when --max-filesize refuses a declared length.
+var FEED_TOO_LARGE_EXIT = 63
 var toastReplaceWindowMs = 10 * 60 * 1000
 var toastAppName = APP_NAME
 
@@ -83,16 +94,23 @@ function searchUrl(term) {
   return API_BASE + "/search/suggest?term=" + encodeURIComponent(String(term || ""))
 }
 
+// Feed ids are numbers; anything else never reaches a URL.
+function cleanId(value) {
+  var id = String(value === undefined || value === null ? "" : value)
+  return /^[0-9]{1,12}$/.test(id) ? id : ""
+}
+
 function teamLogoUrl(teamId) {
-  var id = String(teamId || "")
+  var id = cleanId(teamId)
   if (!id) return ""
   return IMAGE_BASE + "/teamlogo/" + encodeURIComponent(id) + "_small.png"
 }
 
 function leagueLogoUrl(leagueId) {
-  var id = String(leagueId || "")
   // The pinned group is ours, not a competition; there is no crest to fetch.
-  if (!id || id === PINNED_LEAGUE_ID) return ""
+  if (String(leagueId || "") === PINNED_LEAGUE_ID) return ""
+  var id = cleanId(leagueId)
+  if (!id) return ""
   return IMAGE_BASE + "/leaguelogo/" + encodeURIComponent(id) + ".png"
 }
 
@@ -100,15 +118,26 @@ function matchPageUrl(matchId) {
   return "https://www.fotmob.com/matches/" + encodeURIComponent(String(matchId || ""))
 }
 
-function curlCommand(url, timeoutSec) {
+// Crests come only from the feed's own image host, over HTTPS.
+function crestUrl(value, fallbackId) {
+  var url = String(value || "")
+  if (/^https:\/\/images\.fotmob\.com\/image_resources\/logo\/[A-Za-z0-9_\/.-]{1,120}\.png$/.test(url) && url.indexOf("..") === -1) return url
+  return teamLogoUrl(fallbackId)
+}
+
+// curl stops at --max-filesize when the size is declared; head stops a
+// chunked or lying response one byte past the cap, which fails curl and so
+// the command. Should the extra byte slip through, parseJson refuses it.
+var FETCH_SCRIPT = 'set -o pipefail; ' +
+  'curl -fsS --max-time "$1" --max-filesize "$2" -A "$3" -H "Accept: application/json" -H "Referer: https://www.fotmob.com/" -- "$4" | head -c "$(($2 + 1))"'
+
+function curlCommand(url, timeoutSec, maxBytes) {
   var timeout = String(Math.max(4, parseInt(timeoutSec, 10) || 12))
-  return [
-    "curl", "-fsS", "--max-time", timeout,
-    "-A", USER_AGENT,
-    "-H", "Accept: application/json",
-    "-H", "Referer: https://www.fotmob.com/",
-    String(url || "")
-  ]
+  var cap = parseInt(maxBytes, 10)
+  if (!isFinite(cap) || cap <= 0) cap = FEED_LIMITS.matches
+  var target = String(url || "")
+  if (target.indexOf(API_BASE + "/") !== 0) target = ""
+  return ["bash", "-c", FETCH_SCRIPT, "kickoff-fetch", timeout, String(cap), USER_AGENT, target]
 }
 
 function openMatchCommand(matchId) {
@@ -142,9 +171,13 @@ function replaceableToastId(id, atMs, nowMs) {
   return Number(nowMs) - Number(atMs || 0) > toastReplaceWindowMs ? 0 : value
 }
 
-function parseJson(raw) {
+function parseJson(raw, maxBytes) {
+  var text = String(raw || "")
+  // Belt and braces behind the fetch cap: never parse more than it allows.
+  var cap = parseInt(maxBytes, 10)
+  if (isFinite(cap) && cap > 0 && text.length > cap) return { ok: false, value: null, error: "The score feed sent too much" }
   try {
-    return { ok: true, value: JSON.parse(String(raw || "")), error: "" }
+    return { ok: true, value: JSON.parse(text), error: "" }
   } catch (e) {
     return { ok: false, value: null, error: "Could not read the score feed" }
   }
@@ -232,7 +265,7 @@ function normalizeLeague(raw) {
 }
 
 function parseMatches(raw) {
-  var parsed = parseJson(raw)
+  var parsed = parseJson(raw, FEED_LIMITS.matches)
   if (!parsed.ok || !parsed.value || typeof parsed.value !== "object")
     return { ok: false, error: parsed.error || "Unexpected matches payload", date: "", leagues: [] }
   var data = parsed.value
@@ -718,7 +751,7 @@ function goalCaption(event) {
 }
 
 function parseSearch(raw) {
-  var parsed = parseJson(raw)
+  var parsed = parseJson(raw, FEED_LIMITS.search)
   if (!parsed.ok || !Array.isArray(parsed.value)) return []
   var teams = []
   var seen = {}
@@ -742,7 +775,7 @@ function parseSearch(raw) {
 }
 
 function parseTable(raw) {
-  var parsed = parseJson(raw)
+  var parsed = parseJson(raw, FEED_LIMITS.league)
   if (!parsed.ok || !parsed.value) return { ok: false, error: parsed.error || "Unexpected table payload", name: "", rows: [] }
   var data = parsed.value
   var blocks = data.table
@@ -834,7 +867,7 @@ function topStats(data) {
 }
 
 function parseMatchDetails(raw) {
-  var parsed = parseJson(raw)
+  var parsed = parseJson(raw, FEED_LIMITS.details)
   if (!parsed.ok || !parsed.value) return { ok: false, error: parsed.error || "Unexpected match payload", match: null }
   var data = parsed.value
   var general = data.general || {}
@@ -858,13 +891,13 @@ function parseMatchDetails(raw) {
       id: String(homeRaw.id || ""),
       name: String(homeRaw.name || ""),
       score: homeRaw.score,
-      imageUrl: String(homeRaw.imageUrl || teamLogoUrl(homeRaw.id))
+      imageUrl: crestUrl(homeRaw.imageUrl, homeRaw.id)
     },
     away: {
       id: String(awayRaw.id || ""),
       name: String(awayRaw.name || ""),
       score: awayRaw.score,
-      imageUrl: String(awayRaw.imageUrl || teamLogoUrl(awayRaw.id))
+      imageUrl: crestUrl(awayRaw.imageUrl, awayRaw.id)
     },
     utcTime: String(status.utcTime || general.matchTimeUTCDate || ""),
     started: general.started === true || status.started === true,
@@ -1007,6 +1040,10 @@ if (typeof module !== "undefined") {
     leagueLogoUrl: leagueLogoUrl,
     matchPageUrl: matchPageUrl,
     curlCommand: curlCommand,
+    crestUrl: crestUrl,
+    cleanId: cleanId,
+    FEED_LIMITS: FEED_LIMITS,
+    FEED_TOO_LARGE_EXIT: FEED_TOO_LARGE_EXIT,
     openMatchCommand: openMatchCommand,
     notificationText: notificationText,
     toastCommand: toastCommand,

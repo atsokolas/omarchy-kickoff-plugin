@@ -83,7 +83,7 @@ Item {
     lastError = ""
     todayKey = Model.dateKeyFromDate(new Date())
     _matchesOutput = ""
-    matchesProcess.command = Model.curlCommand(Model.matchesUrl(dateKey), 15)
+    matchesProcess.command = Model.curlCommand(Model.matchesUrl(dateKey), 15, Model.FEED_LIMITS.matches)
     matchesProcess.running = true
   }
 
@@ -144,7 +144,7 @@ Item {
     detailError = ""
     matchDetail = matchDetail && String(matchDetail.id) === id ? matchDetail : null
     _detailOutput = ""
-    detailsProcess.command = Model.curlCommand(Model.matchDetailsUrl(id), 15)
+    detailsProcess.command = Model.curlCommand(Model.matchDetailsUrl(id), 15, Model.FEED_LIMITS.details)
     detailsProcess.running = true
   }
 
@@ -165,7 +165,7 @@ Item {
     tableLoading = true
     tableError = ""
     _tableOutput = ""
-    tableProcess.command = Model.curlCommand(Model.leagueUrl(id), 18)
+    tableProcess.command = Model.curlCommand(Model.leagueUrl(id), 18, Model.FEED_LIMITS.league)
     tableProcess.running = true
   }
 
@@ -200,7 +200,7 @@ Item {
     }
     searchLoading = true
     _searchOutput = ""
-    searchProcess.command = Model.curlCommand(Model.searchUrl(term), 8)
+    searchProcess.command = Model.curlCommand(Model.searchUrl(term), 8, Model.FEED_LIMITS.search)
     searchProcess.running = true
   }
 
@@ -271,6 +271,12 @@ Item {
     }
   }
 
+  function feedError(code) {
+    // curl refuses a declared length over the cap with 63. A chunked body cut
+    // off by head fails with a write error instead; either way nothing is parsed.
+    return code === Model.FEED_TOO_LARGE_EXIT ? "The score feed sent too much" : "Could not reach the score feed"
+  }
+
   function openMatch(matchId) {
     Quickshell.execDetached(Model.openMatchCommand(matchId))
   }
@@ -283,7 +289,7 @@ Item {
     }
     onExited: function(code) {
       if (code !== 0) {
-        root.lastError = "Could not reach the score feed"
+        root.lastError = root.feedError(code)
         root.refreshing = false
         if (root.refreshPending) {
           root.refreshPending = false
@@ -304,7 +310,7 @@ Item {
     onExited: function(code) {
       if (code !== 0) {
         root.detailLoading = false
-        root.detailError = "Could not reach the score feed"
+        root.detailError = root.feedError(code)
         return
       }
       root.applyDetails(root._detailOutput)
@@ -320,7 +326,7 @@ Item {
     onExited: function(code) {
       if (code !== 0) {
         root.tableLoading = false
-        root.tableError = "Could not reach the score feed"
+        root.tableError = root.feedError(code)
         return
       }
       root.applyTable(root._tableOutput)

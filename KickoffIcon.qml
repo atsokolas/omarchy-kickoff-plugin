@@ -3,6 +3,7 @@ import qs.Commons
 import "Model.js" as Model
 
 Text {
+  textFormat: Text.PlainText
   id: root
 
   property real iconSize: Style.font.icon

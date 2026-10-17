@@ -96,6 +96,8 @@ Keys while the panel is open:
 
 Scores, tables, and match detail are read from a public website JSON feed (`https://www.fotmob.com/api/data/...`) with crests from `images.fotmob.com`. That feed is unofficial and can change. Nothing is scraped from a logged-in session, and nothing is written back.
 
+Each response has a hard size cap (8 MB for a day's matches, 4 MB for a match, 12 MB for a league table, 512 KB for a search), well above the real sizes. A bigger or endless response is cut off and never parsed. Names from the feed are always shown as plain text, and crests load only from the feed's own image host over HTTPS.
+
 Followed clubs and notification preferences are stored on the widget's entry in `~/.config/omarchy/shell.json`.
 
 ## Tests
